@@ -4,7 +4,7 @@ import matplotlib.pyplot as mt
 
 #odf = original dataframe
 #reading the csv file
-odf=pd.read_csv(r"D:\college\Netflix\archive (2)\netflix1.csv")
+odf=pd.read_csv(r"D:\college\Netflix\Netflix-data-cleaning-visualization\netflix1.csv")
 print("************************************************************************************************")
 print("BEFORE OPERATIONS")
 print("INFO : ")
@@ -54,13 +54,26 @@ countries=df1['country'].value_counts()      #counting each contry's contributio
 print("countries and their contributions : ",countries)
 
 #Getting the year in which most movies,series are released
-print("The year in which most films are released : ",df1["release_year"].value_counts().idxmax())
-print("Number of films released in this year : ",df1["release_year"].value_counts().max())
-df1.to_csv(r"D:\college\Netflix\archive (2)\NoNull.csv")
+year=df1["release_year"].value_counts().idxmax()
+produced=df1["release_year"].value_counts().max()
+print(f"The year in which most movies/shows are released is {year} with {produced} productions.")
+df1.to_csv(r"D:\college\Netflix\Netflix-data-cleaning-visualization\NoNull.csv")
+
+#Getting the director who made most movies/series
+dir_name=df1["director"].value_counts().idxmax()
+dir_val=df1["director"].value_counts().max()
+print(f"The director with most movies is {dir_name} with {dir_val} movies.")
 
 #$$$$$$$$$$$ VISUALIZATION$$$$$$$$$$$$$
-df1.groupby(df1['date_added'].dt.year)['show_id'].count().plot(kind="bar",color='r')
+df1_axis=df1.groupby(df1['date_added'].dt.year)['show_id'].count()
+odf_axis=odf.groupby(odf['date_added'].dt.year)['show_id'].count()
+yrs=sorted(set(df1_axis.index).union(set(odf_axis.index)))#matching the years
+x=range(len(yrs))
+width=0.4
+mt.bar([pos - width/2 for pos in x],df1_axis,color="green",label="with full details",width=width)
+mt.bar([pos + width/2 for pos in x],odf_axis,color="red",label="unfiltered",width=width)
 mt.title("Movies/series released with compolete details in year")
+mt.xticks(x,yrs,rotation=30)
 mt.legend()
 
 mt.show()
