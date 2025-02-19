@@ -7,6 +7,7 @@ import matplotlib.pyplot as mt
 odf=pd.read_csv(r"D:\college\Netflix\Netflix-data-cleaning-visualization\netflix1.csv")
 print("************************************************************************************************")
 print("BEFORE OPERATIONS")
+print(odf.columns)
 print("INFO : ")
 print(odf.info())
 print("COLUMNS : ")
@@ -48,7 +49,7 @@ print(' ')
 
 #counting the number of countries involved in making movies and uploading on netflix
 #and calculating their contributions
-country_count=df1['country'].nunique()       #total number of countries
+country_count=df1['country'].nunique()     #total number of countries
 print("Number of country's movies on netflix : ",country_count)
 countries=df1['country'].value_counts()      #counting each contry's contribution
 print("countries and their contributions : ",countries)
@@ -64,6 +65,23 @@ dir_name=df1["director"].value_counts().idxmax()
 dir_val=df1["director"].value_counts().max()
 print(f"The director with most movies is {dir_name} with {dir_val} movies.")
 
+#Getting the number of movies and TV Shows released
+print("Total number of movies released : ")
+dfm=(df1["type"]=="Movie").sum()
+print(dfm)
+
+print("Total number of TV Shows released : ")
+dfs=(df1["type"]=="TV Show").sum()
+print(dfs)
+
+#Getting directors who make both tv shows and movies
+print("The directors who produced both movies and tv shows : ")
+cmn=df1.groupby("director")["type"].unique()
+common_directors = cmn[cmn.apply(lambda x: set(x) == {"Movie", "TV Show"})].index
+print(common_directors)
+
+
+
 #$$$$$$$$$$$ VISUALIZATION$$$$$$$$$$$$$
 df1_axis=df1.groupby(df1['date_added'].dt.year)['show_id'].count()
 odf_axis=odf.groupby(odf['date_added'].dt.year)['show_id'].count()
@@ -77,6 +95,3 @@ mt.xticks(x,yrs,rotation=30)
 mt.legend()
 
 mt.show()
-
-# print("number of directors involved : ",directorcnt)
-# print(df.groupby('country').value_counts())
